@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/fengelniederhammer/LAPIS-SILO/compare/v0.1.2...v0.1.3) (2026-01-29)
+
+
+### Features
+
+* up ([0f5ee78](https://github.com/fengelniederhammer/LAPIS-SILO/commit/0f5ee78c8f541434d83a16c2adb246315a36618b))
+
 ## [0.1.2](https://github.com/fengelniederhammer/LAPIS-SILO/compare/v0.1.1...v0.1.2) (2026-01-29)
 
 
