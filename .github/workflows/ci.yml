@@ -203,15 +203,10 @@ jobs:
       - name: Verify extracted binaries
         if: env.SILO_VERSION != ''
         run: |
-          ls -al artifacts/
-          
-          for binary in artifacts/silo-*; do
+          for binary in artifacts/silo-amd64 artifacts/silo-arm64; do
             echo "Verifying $binary ..."
-            echo "-f: "
-            [ -f "$binary" ] || exit 1
-            echo "file: "
-            file "$binary"
-            file "$binary" | grep -q ELF || exit 1
+            [ -x "$binary" ] || { echo "  ✗ FAILED: File does not exist or is not executable"; exit 1; }
+            file "$binary" | grep -q ELF || { echo "  ✗ FAILED: File is not an ELF binary"; exit 1; }
             echo "✓ Verified: $binary"
           done
 
