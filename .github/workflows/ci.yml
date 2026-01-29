@@ -203,6 +203,8 @@ jobs:
       - name: Verify extracted binaries
         if: env.SILO_VERSION != ''
         run: |
+          ll artifacts/
+          
           for binary in artifacts/silo-*; do
             echo "-f: "
             [ -f "$binary" ] || exit 1
