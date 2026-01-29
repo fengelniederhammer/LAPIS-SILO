@@ -203,6 +203,9 @@ jobs:
       - name: Verify extracted binaries
         if: env.SILO_VERSION != ''
         run: |
+          echo "Verifying extracted binaries:"
+          ls -al artifacts
+          
           for binary in artifacts/silo-amd64 artifacts/silo-arm64; do
             echo "Verifying $binary ..."
             [ -x "$binary" ] || { echo "  ✗ FAILED: File does not exist or is not executable"; exit 1; }
@@ -215,6 +218,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/*
+          tag_name: v${{ env.SILO_VERSION }}
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
