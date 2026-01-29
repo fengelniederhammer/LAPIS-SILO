@@ -1,4 +1,4 @@
-ARG DEPENDENCY_IMAGE=ghcr.io/genspectrum/lapis-silo-dependencies:latest
+ARG DEPENDENCY_IMAGE=ghcr.io/fengelniederhammer/lapis-silo-dependencies:latest
 
 FROM $DEPENDENCY_IMAGE AS builder
 
@@ -30,6 +30,3 @@ ENTRYPOINT ["./silo"]
 ENV SILO_PREPROCESSING_CONFIG="/app/preprocessing_config.yaml"
 ENV SILO_DEFAULT_PREPROCESSING_CONFIG="/app/default_preprocessing_config.yaml"
 ENV SILO_DEFAULT_RUNTIME_CONFIG="/app/default_runtime_config.yaml"
-
-LABEL org.opencontainers.image.source="https://github.com/GenSpectrum/LAPIS-SILO"
-LABEL org.opencontainers.image.description="Sequence Indexing engine for Large Order of genomic data"

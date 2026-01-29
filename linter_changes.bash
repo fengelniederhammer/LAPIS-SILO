@@ -4,7 +4,7 @@
 set -e
 
 # Check if the image argument is provided, otherwise use :latest
-DOCKER_IMAGE="${1:-ghcr.io/genspectrum/lapis-silo-dependencies:latest}"
+DOCKER_IMAGE="${1:-ghcr.io/fengelniederhammer/lapis-silo-dependencies:latest}"
 
 echo "Using Docker image: $DOCKER_IMAGE"
 docker pull "$DOCKER_IMAGE"

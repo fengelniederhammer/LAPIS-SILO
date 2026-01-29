@@ -6,7 +6,6 @@ All queries are accepted by the same `/query` endpoint.
 
 Each query consists of a `filter` and an `action`, described separately below.
 
-Example files can be seen in the [repository](https://github.com/GenSpectrum/LAPIS-SILO/tree/main/endToEndTests/test/queries).
 
 ## Filter
 

@@ -209,8 +209,6 @@ End-to-end tests are located in `/endToEndTests`. Those tests are used to verify
 queries. To execute the tests:
 
 - have a running SILO instance with preprocessd data e.g. via
-  - `SILO_IMAGE=ghcr.io/genspectrum/lapis-silo docker compose -f docker-compose-for-tests-preprocessing.yml up`
-  - `SILO_IMAGE=ghcr.io/genspectrum/lapis-silo docker compose -f docker-compose-for-tests-api.yml up -d wait`
 - `cd endToEndTests`
 - `npm install`
 - `SILO_URL=localhost:8081 npm run test`

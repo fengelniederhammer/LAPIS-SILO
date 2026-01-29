@@ -8,8 +8,8 @@ on:
     branches: [main]
 
 env:
-  DOCKER_DEPENDENCY_IMAGE_NAME: ghcr.io/genspectrum/lapis-silo-dependencies
-  DOCKER_IMAGE_NAME: ghcr.io/genspectrum/lapis-silo
+  DOCKER_DEPENDENCY_IMAGE_NAME: ghcr.io/fengelniederhammer/lapis-silo-dependencies
+  DOCKER_IMAGE_NAME: ghcr.io/fengelniederhammer/lapis-silo
 
 jobs:
   dockerImage:
@@ -243,7 +243,7 @@ jobs:
 #          fi
 #
 #      - name: Run linter script
-#        run: bash ./linter_changes.bash ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64
+#        run: bash ./linter_changes.bash ghcr.io/fengelniederhammer/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64
 #
 #
 #  linterAll:
@@ -266,7 +266,7 @@ jobs:
 #        name: Build all files with clang-tidy
 #        run: |
 #          docker build -f ./Dockerfile_linter \
-#            --build-arg DEPENDENCY_IMAGE=ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64 .
+#            --build-arg DEPENDENCY_IMAGE=ghcr.io/fengelniederhammer/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64 .
     
   unitTests:
     runs-on: ubuntu-latest
