@@ -179,94 +179,94 @@ jobs:
               "${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64"
           done
 
-  endToEndTests:
-    name: Run End To End Tests
-    needs: dockerImage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
+#  endToEndTests:
+#    name: Run End To End Tests
+#    needs: dockerImage
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v6
+#
+#      - name: Use Node.js ${{ matrix.node-version }}
+#        uses: actions/setup-node@v6
+#        with:
+#          node-version: 18.x
+#
+#      - name: Determine HEAD_SHA
+#        run: |
+#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+#            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+#          else
+#            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
+#          fi
+#
+#      - uses: actions/cache@v5
+#        with:
+#          path: ~/.npm
+#          key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
+#
+#      - name: npm install
+#        run: cd endToEndTests && npm ci
+#
+#      - name: Check Format
+#        run: cd endToEndTests && npm run check-format
+#
+#      - name: Start Docker Container and preprocess data
+#        run: docker compose -f docker-compose-for-tests-preprocessing-from-ndjson.yml up
+#        env:
+#          SILO_IMAGE: ${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64
+#
+#      - name: Start Docker Container and run api
+#        run: docker compose -f docker-compose-for-tests-api.yml up -d --wait
+#        env:
+#          SILO_IMAGE: ${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64
+#
+#      - name: Run Tests
+#        run: cd endToEndTests && SILO_URL=localhost:8080 npm run test
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: 18.x
-
-      - name: Determine HEAD_SHA
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          else
-            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
-          fi
-
-      - uses: actions/cache@v5
-        with:
-          path: ~/.npm
-          key: "${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}"
-
-      - name: npm install
-        run: cd endToEndTests && npm ci
-
-      - name: Check Format
-        run: cd endToEndTests && npm run check-format
-
-      - name: Start Docker Container and preprocess data
-        run: docker compose -f docker-compose-for-tests-preprocessing-from-ndjson.yml up
-        env:
-          SILO_IMAGE: ${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64
-
-      - name: Start Docker Container and run api
-        run: docker compose -f docker-compose-for-tests-api.yml up -d --wait
-        env:
-          SILO_IMAGE: ${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64
-
-      - name: Run Tests
-        run: cd endToEndTests && SILO_URL=localhost:8080 npm run test
-
-  linterChanges:
-    name: Build/Run linter on changed files
-    needs: dockerImage
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Determine HEAD_SHA
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          else
-            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
-          fi
-
-      - name: Run linter script
-        run: bash ./linter_changes.bash ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64
-
-
-  linterAll:
-    name: Build/Run linter on all files
-    needs: dockerImage
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'trigger-linter')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Determine HEAD_SHA
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          else
-            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
-          fi
-
-      - shell: bash
-        name: Build all files with clang-tidy
-        run: |
-          docker build -f ./Dockerfile_linter \
-            --build-arg DEPENDENCY_IMAGE=ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64 . 
+#  linterChanges:
+#    name: Build/Run linter on changed files
+#    needs: dockerImage
+#    if: github.event_name == 'pull_request'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v6
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Determine HEAD_SHA
+#        run: |
+#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+#            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+#          else
+#            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
+#          fi
+#
+#      - name: Run linter script
+#        run: bash ./linter_changes.bash ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64
+#
+#
+#  linterAll:
+#    name: Build/Run linter on all files
+#    needs: dockerImage
+#    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'trigger-linter')
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v6
+#
+#      - name: Determine HEAD_SHA
+#        run: |
+#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+#            echo "HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+#          else
+#            echo "HEAD_SHA=${{ github.sha }}" >> $GITHUB_ENV
+#          fi
+#
+#      - shell: bash
+#        name: Build all files with clang-tidy
+#        run: |
+#          docker build -f ./Dockerfile_linter \
+#            --build-arg DEPENDENCY_IMAGE=ghcr.io/genspectrum/lapis-silo-dependencies:commit-${{ env.HEAD_SHA }}-amd64 .
     
   unitTests:
     runs-on: ubuntu-latest

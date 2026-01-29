@@ -1,1 +1,0 @@
-#define EVOBENCH_VERSION "v0.1.1"

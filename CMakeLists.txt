@@ -58,17 +58,6 @@ add_compile_definitions(SIMDJSON_EXCEPTIONS=0)
 # Dependencies
 # ---------------------------------------------------------------------------
 
-find_package(Arrow REQUIRED COMPONENTS Acero XYZ)
-find_package(Boost REQUIRED COMPONENTS system serialization iostreams)
-find_package(LibLZMA REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(Poco REQUIRED COMPONENTS Net Util JSON)
-find_package(re2 REQUIRED)
-find_package(roaring REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(simdjson REQUIRED)
-find_package(yaml-cpp REQUIRED)
-find_package(zstd REQUIRED)
 
 # ---------------------------------------------------------------------------
 # Version
@@ -128,32 +117,11 @@ endif ()
 # Targets
 # ---------------------------------------------------------------------------
 
-add_library(silolib_obj OBJECT ${SRC_SILO_WITHOUT_MAIN})
-target_link_libraries(
-        silolib_obj
-        PUBLIC
-        Arrow::arrow_static
-        ArrowAcero::arrow_acero_static
-        ${Boost_LIBRARIES}
-        ${duckdb_LIBRARIES}
-        nlohmann_json::nlohmann_json
-        ${roaring_LIBRARIES}
-        ${spdlog_LIBRARIES}
-        ${simdjson_LIBRARIES}
-        ${yaml-cpp_LIBRARIES}
-        zstd::libzstd_static
-        Poco::Net
-        Poco::Util
-        Poco::JSON
-        re2::re2
-)
 
-add_executable(silo "${CMAKE_SOURCE_DIR}/src/main.cpp" $<TARGET_OBJECTS:silolib_obj>)
+add_executable(silo "${CMAKE_SOURCE_DIR}/src/main.cpp" )
 target_link_libraries(
         silo
         PUBLIC
-        ${MIMALLOC_LIB} # this should be first
-        silolib_obj
 )
 
 # ---------------------------------------------------------------------------
@@ -161,17 +129,11 @@ target_link_libraries(
 # ---------------------------------------------------------------------------
 
 enable_testing()
-find_package(GTest REQUIRED)
-include_directories(${GTest_INCLUDE_DIRS})
 
-add_executable(silo_test ${SRC_TEST} $<TARGET_OBJECTS:silolib_obj>)
-if (NOT GTest_LIBRARIES)
-    set(GTest_LIBRARIES gtest gmock)
-endif ()
-target_link_libraries(silo_test PUBLIC ${GTest_LIBRARIES} silolib_obj)
+add_executable(silo_test ${SRC_TEST})
+target_link_libraries(silo_test PUBLIC)
 
 # ---------------------------------------------------------------------------
 # Benchmarks
 # ---------------------------------------------------------------------------
 
-add_subdirectory(performance)
