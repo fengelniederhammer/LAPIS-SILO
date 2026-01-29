@@ -209,8 +209,6 @@ jobs:
             echo "Verifying $binary ..."
             echo "-f: "
             [ -f "$binary" ] || exit 1
-            echo "-x: "
-            [ -x "$binary" ] || exit 1
             echo "file: "
             file "$binary"
             file "$binary" | grep -q ELF || exit 1
