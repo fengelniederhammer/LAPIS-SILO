@@ -179,6 +179,45 @@ jobs:
               "${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-amd64"
           done
 
+      - name: Extract binaries for release
+        if: env.SILO_VERSION != ''
+        run: |
+          echo "Extracting binaries for version ${{ env.SILO_VERSION }}"
+          mkdir -p artifacts
+
+          for arch in amd64 arm64; do
+            IMAGE="${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-$arch"
+            echo "Extracting from $IMAGE"
+
+            docker create --name extract-$arch $IMAGE
+            docker cp extract-$arch:/app/silo artifacts/silo-$arch
+            docker rm extract-$arch
+
+            chmod +x artifacts/silo-$arch
+            [ -f "artifacts/silo-$arch" ] || exit 1
+
+            sha256sum artifacts/silo-$arch > artifacts/silo-$arch.sha256sum
+          done
+
+      - name: Verify extracted binaries
+        if: env.SILO_VERSION != ''
+        run: |
+          for binary in artifacts/silo-*; do
+            [ -f "$binary" ] || exit 1
+            [ -x "$binary" ] || exit 1
+            file "$binary" | grep -q ELF || exit 1
+            "$binary" --version || true
+            echo "✓ Verified: $binary"
+          done
+
+      - name: Upload binaries to GitHub Release
+        if: env.SILO_VERSION != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 #  endToEndTests:
 #    name: Run End To End Tests
 #    needs: dockerImage
