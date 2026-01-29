@@ -190,9 +190,10 @@ jobs:
 
           for arch in amd64 arm64; do
             IMAGE="${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-$arch"
-            echo "Extracting from $IMAGE"
+            PLATFORM="linux/$arch"
+            echo "Extracting from $IMAGE ($PLATFORM)"
 
-            docker create --name extract-$arch $IMAGE
+            docker create --platform $PLATFORM --name extract-$arch $IMAGE
             docker cp extract-$arch:/app/silo artifacts/silo-$arch
             docker rm extract-$arch
 
