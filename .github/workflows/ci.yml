@@ -210,7 +210,6 @@ jobs:
             [ -f "$binary" ] || exit 1
             [ -x "$binary" ] || exit 1
             file "$binary" | grep -q ELF || exit 1
-            "$binary" --version || true
             echo "✓ Verified: $binary"
           done
 
