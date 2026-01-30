@@ -191,25 +191,25 @@ jobs:
             IMAGE="${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-$arch"
             PLATFORM="linux/$arch"
             echo "Extracting from $IMAGE ($PLATFORM)"
-          
-            binary="./silo-linux-$arch"
+
+            binary="silo-linux-$arch"
 
             docker create --platform $PLATFORM --name extract-$arch $IMAGE
             docker cp extract-$arch:/app/silo "./$binary"
             docker rm extract-$arch
 
             chmod +x "./$binary"
-          
+
             echo "Verifying $binary ..."
             [ -x "$binary" ] || { echo "  ✗ FAILED: File does not exist or is not executable"; exit 1; }
             file "$binary" | grep -q ELF || { echo "  ✗ FAILED: File is not an ELF binary"; exit 1; }
             echo "✓ Verified: $binary"
 
-            sha256sum silo-linux-$arch > "./$binary.sha256sum"
+            sha256sum "$binary" > "$binary.sha256sum"
             # Create tar archive so that the file is executable when downloaded from GitHub Releases
             tar -czf "$binary.tar.gz" "$binary"
           done
-          
+
           echo "Files in artifacts/ after extraction:"
           ls -alh .
 
