@@ -217,7 +217,9 @@ jobs:
         if: env.SILO_VERSION != ''
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.tar.gz artifacts/*.sha256sum
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.sha256sum
           tag_name: v${{ env.SILO_VERSION }}
           fail_on_unmatched_files: true
         env:
