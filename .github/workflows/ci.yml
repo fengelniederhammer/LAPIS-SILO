@@ -191,35 +191,33 @@ jobs:
             IMAGE="${{ env.DOCKER_IMAGE_NAME }}:commit-${{ env.HEAD_SHA }}-$arch"
             PLATFORM="linux/$arch"
             echo "Extracting from $IMAGE ($PLATFORM)"
+          
+            binary="./silo-linux-$arch"
 
             docker create --platform $PLATFORM --name extract-$arch $IMAGE
-            docker cp extract-$arch:/app/silo ./silo-linux-$arch
+            docker cp extract-$arch:/app/silo "./$binary"
             docker rm extract-$arch
 
-            chmod +x ./silo-linux-$arch
-            [ -f "./silo-linux-$arch" ] || exit 1
-
-            sha256sum silo-linux-$arch > ./silo-linux-$arch.sha256sum
-          done
-
-      - name: Verify extracted binaries
-        if: env.SILO_VERSION != ''
-        run: |
-          echo "Verifying extracted binaries:"
-          ls -al artifacts
+            chmod +x "./$binary"
           
-          for binary in artifacts/silo-linux-amd64 artifacts/silo-linux-arm64; do
             echo "Verifying $binary ..."
             [ -x "$binary" ] || { echo "  ✗ FAILED: File does not exist or is not executable"; exit 1; }
             file "$binary" | grep -q ELF || { echo "  ✗ FAILED: File is not an ELF binary"; exit 1; }
             echo "✓ Verified: $binary"
+
+            sha256sum silo-linux-$arch > "./$binary.sha256sum"
+            # Create tar archive so that the file is executable when downloaded from GitHub Releases
+            tar -czf "$binary.tar.gz" "$binary"
           done
+          
+          echo "Files in artifacts/ after extraction:"
+          ls -alh .
 
       - name: Upload binaries to GitHub Release
         if: env.SILO_VERSION != ''
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*
+          files: artifacts/*.tar.gz artifacts/*.sha256sum
           tag_name: v${{ env.SILO_VERSION }}
           fail_on_unmatched_files: true
         env:
