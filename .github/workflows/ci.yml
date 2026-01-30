@@ -193,13 +193,13 @@ jobs:
             echo "Extracting from $IMAGE ($PLATFORM)"
 
             docker create --platform $PLATFORM --name extract-$arch $IMAGE
-            docker cp extract-$arch:/app/silo ./silo-$arch
+            docker cp extract-$arch:/app/silo ./silo-linux-$arch
             docker rm extract-$arch
 
-            chmod +x ./silo-$arch
-            [ -f "./silo-$arch" ] || exit 1
+            chmod +x ./silo-linux-$arch
+            [ -f "./silo-linux-$arch" ] || exit 1
 
-            sha256sum ./silo-$arch > ./silo-$arch.sha256sum
+            sha256sum silo-linux-$arch > ./silo-linux-$arch.sha256sum
           done
 
       - name: Verify extracted binaries
@@ -208,7 +208,7 @@ jobs:
           echo "Verifying extracted binaries:"
           ls -al artifacts
           
-          for binary in artifacts/silo-amd64 artifacts/silo-arm64; do
+          for binary in artifacts/silo-linux-amd64 artifacts/silo-linux-arm64; do
             echo "Verifying $binary ..."
             [ -x "$binary" ] || { echo "  ✗ FAILED: File does not exist or is not executable"; exit 1; }
             file "$binary" | grep -q ELF || { echo "  ✗ FAILED: File is not an ELF binary"; exit 1; }
